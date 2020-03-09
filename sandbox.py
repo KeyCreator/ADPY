@@ -1,11 +1,7 @@
-import time
+import json
 
-array = range(500)
-percent = 100 / len(array)
-progress = 0
-
-for item in array:
-    time.sleep(0.01)
-#    print('.', end='')
-    progress += percent
-    print('Processing is completed at %3d%%' % progress, end='\r', flush=True)
+file = open(f'phones.json', 'w')
+data = ('Sergey', 'Klimov', '952', True)
+contact = [[data]]
+json.dump(contact, file)
+file.close()
