@@ -159,7 +159,7 @@ def main():
             save_book(book_name, phone_book)
             break
 
-        input('Press enter to continue')
+        input('Press enter to continue: ')
 
 
 if __name__ == '__main__':
