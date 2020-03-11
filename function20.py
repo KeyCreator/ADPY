@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 
 BOOK_NAME = 'phones'
 COMMANDS = {'a': 'add contact',
@@ -9,6 +8,20 @@ COMMANDS = {'a': 'add contact',
             'f': 'show favorites',
             'q': 'quit and save changes'
             }
+
+original_print = print
+def print(*args, **kwargs):
+    new_args = list()
+    for arg in args:
+
+        if isinstance(arg, dict):
+            for key, value in arg.items():
+                new_args.append(f'\b{key}: {value}\n')
+        else:
+            new_args.append(arg)
+
+    args = tuple(new_args)
+    original_print(*args, **kwargs)
 
 
 def read_book(name):
@@ -46,11 +59,19 @@ class Contact:
         self.additional = args[4]
 
     def __str__(self):
-        return f'First name: {self.first_name}\n'\
+        str_ = f'First name: {self.first_name}\n'\
                f'Last name: {self.last_name}\n'\
                f'Phone number: {self.phone_number}\n'\
-               f'In favorites: {"yes" if self.favourites else "no"}\n'\
-               f'Additional information {self.additional}'
+               f'In favorites: {"yes" if self.favourites else "no"}'
+
+        if self.additional:
+            for i, key in enumerate(self.additional.keys()):
+                if i:
+                    str_ = f'{str_}\n                        {key} = {self.additional[key]}'
+                else:
+                    str_ = f'{str_}\nAdditional information: {key} = {self.additional[key]}'
+
+        return str_
 
 
 class PhoneBook:
@@ -93,7 +114,7 @@ class PhoneBook:
 
 
 def show_menu():
-    pprint(COMMANDS)
+    print(COMMANDS)
     while True:
         choice = input('Selected action: ')
         if choice in COMMANDS.keys():
@@ -152,6 +173,7 @@ def main():
             deleted_contact = phone_book.search_phone(phone_number)
             if deleted_contact:
                 phone_book -= deleted_contact
+                print('Contact is deleted')
             else:
                 print('Contact not found')
 

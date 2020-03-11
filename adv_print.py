@@ -21,13 +21,11 @@ def adv_print(*args, **kwargs):
     max_line = kwargs['max_line'] if 'max_line' in kwargs.keys() else 0
     in_file = kwargs['in_file'] if 'in_file' in kwargs.keys() else False
 
-    str_out = sep.join(args)
+    str_out = f'{start}{sep.join(args)}'
 
     if max_line:
-        str_out = [str_out[x:x+max_line] for x in range (0, len(str_out), max_line)]
+        str_out = [str_out[x: x + max_line] for x in range(0, len(str_out), max_line)]
         str_out = '\n'.join(str_out)
-
-    str_out = f'{start}{str_out}'
 
     if in_file:
         file_out = open('adv_print.txt', 'w')
