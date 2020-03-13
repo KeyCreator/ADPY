@@ -1,6 +1,7 @@
 import requests
 from mywikipediaapi import get_wiki_urls
 from datetime import datetime
+import sandbox
 
 
 FILE_URL = 'https://raw.githubusercontent.com/mledoze/countries/master/countries.json'
@@ -38,6 +39,7 @@ class Countries:
     def __iter__(self):
         return self
 
+    @sandbox.named_function_decor('countries_next')
     def __next__(self):
         self.start += 1
         if self.start == self.end:
