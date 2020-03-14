@@ -9,8 +9,7 @@ COMMANDS = {'a': 'add contact',
             'q': 'quit and save changes'
             }
 
-original_print = print
-def print(*args, **kwargs):
+def print_menu(*args, **kwargs):
     new_args = list()
     for arg in args:
 
@@ -21,7 +20,7 @@ def print(*args, **kwargs):
             new_args.append(arg)
 
     args = tuple(new_args)
-    original_print(*args, **kwargs)
+    print(*args, **kwargs)
 
 
 def read_book(name):
@@ -51,25 +50,27 @@ def save_book(name, book):
 
 
 class Contact:
-    def __init__(self, *args):
-        self.first_name = args[0]
-        self.last_name = args[1]
-        self.phone_number = args[2]
-        self.favourites = args[3]
-        self.additional = args[4]
+    def __init__(self, first_name, last_name, phone_number, *args, **kwargs):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.phone_number = phone_number
+        if args:
+            self.favourites = args[0]
+        self.additional = kwargs
 
     def __str__(self):
         str_ = f'First name: {self.first_name}\n'\
-               f'Last name: {self.last_name}\n'\
-               f'Phone number: {self.phone_number}\n'\
-               f'In favorites: {"yes" if self.favourites else "no"}'
+               f'    Last name: {self.last_name}\n'\
+               f'    Phone number: {self.phone_number}\n'\
+               f'    In favorites: {"yes" if self.favourites else "no"}\n'
 
-        if self.additional:
-            for i, key in enumerate(self.additional.keys()):
-                if i:
-                    str_ = f'{str_}\n                        {key} = {self.additional[key]}'
-                else:
-                    str_ = f'{str_}\nAdditional information: {key} = {self.additional[key]}'
+        additional_exist = False
+        for key, value in self.additional.items():
+            if value:
+                if not additional_exist:
+                    str_ = f'{str_}    Additional information:\n'
+                    additional_exist = True
+                str_ = f'{str_}        {key} = {value}\n'
 
         return str_
 
@@ -81,7 +82,20 @@ class PhoneBook:
         self.contacts = list()
 
         for file_contact in read_book(name):
-            self.contacts.append(Contact(file_contact[0], file_contact[1], file_contact[2], file_contact[3], file_contact[4]))
+            first_name = file_contact[0]
+            last_name = file_contact[1]
+            phone_number = file_contact[2]
+            favourites = file_contact[3]
+            email = file_contact[4]['email']
+            phones_etc = file_contact[4]['phones_etc']
+            telegram = file_contact[4]['telegram']
+            self.contacts.append(Contact(first_name,
+                                         last_name,
+                                         phone_number,
+                                         favourites,
+                                         email=email,
+                                         phones_etc=phones_etc,
+                                         telegram=telegram))
 
     def output(self, favourites=None):
         result = False
@@ -103,18 +117,15 @@ class PhoneBook:
             if contact.first_name.upper() == name['first_name'].upper():
                 if contact.last_name.upper() == name['last_name'].upper():
                     return contact
-        return
 
     def search_phone(self, phone):
         for i, contact in enumerate(self.contacts):
             if contact.phone_number == phone:
                 return contact
-        return
-
 
 
 def show_menu():
-    print(COMMANDS)
+    print_menu(COMMANDS)
     while True:
         choice = input('Selected action: ')
         if choice in COMMANDS.keys():
@@ -138,17 +149,17 @@ def main():
             last_name = input('Last name: ').strip()
             phone_number = input('Phone number: ').strip()
             favourites = True if input('Favourites? (y - Yes): ').strip() == 'y' else False
+            email = input('Email (enter - skip): ').strip()
+            phones_etc = input('List of additional numbers (enter - skip): ').strip()
+            telegram = input('Telegram (enter - skip): ').strip()
 
-            additional = dict()
-            while True:
-                new_key = input('Enter an additional field (enter - skip): ').strip()
-                if new_key:
-                    new_value = input(f'  input {new_key}: ').strip()
-                else:
-                    break
-                additional.setdefault(new_key, new_value)
-
-            phone_book += Contact(first_name, last_name, phone_number, favourites, additional)
+            phone_book += Contact(first_name,
+                                  last_name,
+                                  phone_number,
+                                  favourites,
+                                  email=email,
+                                  phones_etc=phones_etc,
+                                  telegram=telegram)
 
         elif user_choice == 'o':
             if not phone_book.output():

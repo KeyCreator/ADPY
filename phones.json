@@ -1,1 +1,1 @@
-[["Jhon", "Smith", "+71234567809", false, {"telegram": "@jhony", "email": "jhony@smith.com"}], ["Lisa", "Podlisa", "8800", true, {"vk": "vk_lisa"}]]
+[["Jhon", "Smith", "+71234567809", false, {"email": "jhony@smith.com", "phones_etc": "", "telegram": "@jhony"}], ["Lisa", "Podlisa", "8800", true, {"email": "lisa@podlisa.com", "phones_etc": "8804", "telegram": ""}], ["Ivan", "Ivanoff", "952", true, {"email": "ivan@rambler.com", "phones_etc": "", "telegram": "@ivanoff"}], ["alena", "aulova", "903", false, {"email": "", "phones_etc": "", "telegram": ""}]]
