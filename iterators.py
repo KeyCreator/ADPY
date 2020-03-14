@@ -1,11 +1,34 @@
 import requests
 from mywikipediaapi import get_wiki_urls
 from datetime import datetime
-import sandbox
+import atexit
 
 
 FILE_URL = 'https://raw.githubusercontent.com/mledoze/countries/master/countries.json'
 FILE_NAME = 'countries.txt'
+
+
+def named_function_decor(function_name):
+
+    def function_decor(present_function):
+        global _file
+        _file = open(f'{function_name}.log', 'w', encoding='utf-8')
+
+        def new_function(*args, **kwargs):
+            result = present_function(*args, **kwargs)
+            _file.write(f'{function_name}({args}, {kwargs}) = {result}\n')
+
+            return result
+
+        return new_function
+
+    return function_decor
+
+
+@atexit.register
+def goodbye():
+    _file.close()
+    print(f'The file {_file.name} with the function call history is generated')
 
 
 class Open:
@@ -39,7 +62,7 @@ class Countries:
     def __iter__(self):
         return self
 
-    @sandbox.named_function_decor('countries_next')
+    @named_function_decor('countries_next')
     def __next__(self):
         self.start += 1
         if self.start == self.end:
